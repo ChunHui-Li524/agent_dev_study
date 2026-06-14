@@ -5,6 +5,7 @@
 @Description: 
     This is a brief description of what the script does.
 """
+from ast import Break
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -20,7 +21,7 @@ client = OpenAI(
 def practice_1():
     # 模型列表：https://help.aliyun.com/model-studio/getting-started/models
     response = client.chat.completions.create(
-        model="qwen3.5-27b",
+        model="qwen3.6-27b",
         messages=[
             {"role": "user", "content": "hello, 你是谁"}
         ]
@@ -37,7 +38,7 @@ def chat():
     ]
     while True:
         response = client.chat.completions.create(
-            model="qwen3.5-27b",
+            model="qwen3.6-27b",
             messages=messages
         )
 
@@ -66,17 +67,22 @@ def stream_chat():
     ]
     while True:
         stream = client.chat.completions.create(
-            model="qwen3.5-27b",
+            model="qwen3.6-27b",
             messages=messages,
             stream=True
         )
+        full_response = ""
         for chunk in stream:
             # print(chunk)
+            if not chunk.choices:
+                break
             txt = chunk.choices[0].delta.content
             if txt is not None:
                 print(txt, end="", flush=True)
+                full_response += txt
 
-        print("\n-" * 80, end="\n\n")
+        print("\n" + "-" * 80, end="\n\n")
+        messages.append({"role": "assistant", "content": full_response})
         user_input = input(f"{'你>>':<8}")
         if user_input.lower() == "exit" or user_input.lower() == "111":
             break

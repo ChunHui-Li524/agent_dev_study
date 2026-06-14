@@ -21,20 +21,23 @@ asyncio==3.4.3
 loguru==0.7.2
 
 # 测试框架
-pytest==7.4.3
+pytest==8.3.4
 pytest-asyncio==0.21.1
+
+# LlamaIndex 旧版 monolithic 包依赖 pkg_resources（setuptools 提供）
+setuptools>=69.0.0
 
 # ============================================
 # LLM 客户端（阶段 1 - API 基础）
 # ============================================
-# OpenAI SDK
-openai==1.10.0
+# OpenAI SDK（>=1.55 修复 httpx 0.28 移除 proxies 参数的兼容问题）
+openai==1.58.1
 
 # Anthropic SDK
-anthropic==0.18.1
+anthropic==0.34.2
 
 # 智谱 AI SDK
-zhipuai==2.1.0.20240119
+zhipuai==2.1.5.20250825
 
 # 阿里通义千问 SDK
 dashscope==1.14.1
@@ -44,22 +47,18 @@ dashscope==1.14.1
 # ============================================
 # LangChain 核心库
 langchain==0.1.5
-langchain-core==0.1.13
 
 # LangChain 社区集成
 langchain-community==0.0.19
 
 # OpenAI 集成
-langchain-openai==0.0.5
-
-# Anthropic 集成
-langchain-anthropic==0.1.8
+langchain-openai==0.0.2
 
 # ============================================
 # LlamaIndex 框架（阶段 3）
 # ============================================
-# LlamaIndex 核心库
-llama-index==0.9.27
+# 使用模块化包（example 中 from llama_index.core import ...）
+llama-index-core>=0.10.68,<0.11.0
 
 # OpenAI LLM 支持
 llama-index-llms-openai==0.1.8
@@ -68,7 +67,8 @@ llama-index-llms-openai==0.1.8
 llama-index-embeddings-openai==0.1.5
 
 # 向量数据库支持
-llama-index-vector-stores-chroma==0.1.5
+# 向量数据库（Phase 3 需要；Windows 需预编译 wheel，见 phase3_llamaindex/requirements.txt）
+# llama-index-vector-stores-chroma==0.1.5
 
 # ============================================
 # AutoGen 框架（阶段 4）
@@ -78,8 +78,9 @@ pyautogen==0.2.28
 # ============================================
 # CrewAI 框架（阶段 5）
 # ============================================
-crewai==0.1.26
-crewai-tools==0.0.15
+crewai==0.1.32
+# crewai-tools 与当前 LangChain 0.1.x 存在依赖冲突，进入 Phase 5 时再单独安装
+# crewai-tools==0.0.15
 
 # ============================================
 # 数据处理与可视化
@@ -90,7 +91,7 @@ numpy==1.26.3
 
 # 网页抓取
 beautifulsoup4==4.12.3
-selenium==4.17.2
+selenium==4.27.1
 
 # 文档处理
 pypdf==3.17.4

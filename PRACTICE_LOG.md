@@ -5,7 +5,7 @@
 ## Phase 1 — API 基础
 
 - [x] `01_api.py` — 基础调用 + 聊天（待更新 persona 为 AI 专家）
-- [ ] `02_streaming.py`
+- [x] `02_streaming.py` — 流式 + AI 专家 + chunk 统计
 - [ ] `03_error_retry.py`
 - [ ] `04_token_usage.py`
 - [ ] `05_async_batch.py`
