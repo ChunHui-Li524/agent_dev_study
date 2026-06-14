@@ -1,0 +1,8 @@
+{
+  "RAG": "检索增强生成（Retrieval-Augmented Generation）：从外部知识库检索相关内容，再交给 LLM 生成回答。",
+  "Agent": "智能体：能感知环境、推理决策并调用工具完成目标的 LLM 应用系统。",
+  "Function Calling": "函数调用：LLM 以结构化 JSON 输出工具名和参数，由程序执行后回传结果。",
+  "Embedding": "嵌入向量：将文本映射为高维向量，用于语义相似度检索。",
+  "Prompt Engineering": "提示工程：通过设计 system/user 提示引导模型输出质量。",
+  "Token": "Token：模型处理文本的最小单位，影响上下文长度与 API 成本。"
+}

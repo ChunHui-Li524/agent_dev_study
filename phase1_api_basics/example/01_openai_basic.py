@@ -6,6 +6,8 @@
 1. 如何使用 OpenAI SDK 调用 Chat Completion API
 2. 理解核心参数：model、messages、temperature、max_tokens
 3. 处理 API 响应
+
+practice 改用通义千问 + AI 专家 persona，见 LEARNING_PLAN.md
 """
 
 import os

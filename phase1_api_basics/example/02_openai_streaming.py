@@ -6,6 +6,8 @@
 1. 如何使用流式输出（Streaming）
 2. 实时显示生成内容
 3. 处理流式响应的块（Chunk）
+
+practice 变式：AI 专家流式问答，见 practice/02_streaming.py
 """
 
 import os

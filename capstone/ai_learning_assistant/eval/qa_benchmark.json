@@ -1,0 +1,22 @@
+[
+  {
+    "question": "什么是 RAG？",
+    "expected_keywords": ["检索", "生成", "知识库"]
+  },
+  {
+    "question": "什么是 AI Agent？",
+    "expected_keywords": ["工具", "推理", "自主"]
+  },
+  {
+    "question": "Function Calling 的作用是什么？",
+    "expected_keywords": ["工具", "结构化", "参数"]
+  },
+  {
+    "question": "Embedding 用于什么场景？",
+    "expected_keywords": ["向量", "语义", "检索"]
+  },
+  {
+    "question": "Prompt Engineering 和微调有什么区别？",
+    "expected_keywords": ["提示", "微调", "成本"]
+  }
+]

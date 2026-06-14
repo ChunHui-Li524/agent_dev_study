@@ -1,0 +1,9 @@
+pyside6
+python-dotenv
+openai
+langchain
+langchain-openai
+llama-index
+llama-index-llms-openai
+llama-index-embeddings-openai
+chromadb
