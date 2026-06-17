@@ -7,7 +7,7 @@
 - [x] `01_api.py` — 基础调用 + 聊天（待更新 persona 为 AI 专家）
 - [x] `02_streaming.py` — 流式 + AI 专家 + chunk 统计
 - [x] `03_error_retry.py` — call_llm 封装 + 指数退避 + AI 专家
-- [ ] `04_token_usage.py`
+- [x] `04_token_usage.py` — usage 统计 + 多轮累计 token + 成本估算
 - [ ] `05_async_batch.py`
 - [ ] `06_function_calling.py`
 - [ ] `07_tool_loop.py`
