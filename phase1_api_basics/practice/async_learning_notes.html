@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python 异步编程学习笔记 · 练习 05 延伸</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface-2: #243044;
+      --border: #2d3a4f;
+      --text: #e7ecf3;
+      --text-muted: #9aa8bc;
+      --accent: #5b9fd4;
+      --accent-soft: rgba(91, 159, 212, 0.15);
+      --green: #6bcba8;
+      --green-soft: rgba(107, 203, 168, 0.12);
+      --orange: #e8a86b;
+      --orange-soft: rgba(232, 168, 107, 0.12);
+      --red: #e87b7b;
+      --red-soft: rgba(232, 123, 123, 0.12);
+      --purple: #b08cff;
+      --code-bg: #0d1117;
+      --radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 16px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1a2a3a 0%, #0f1a28 50%, #1a2332 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(91, 159, 212, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner { max-width: 900px; margin: 0 auto; position: relative; }
+
+    .hero .tag {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(90deg, #fff 0%, #a8c8e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p { color: var(--text-muted); max-width: 640px; }
+
+    .layout {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; padding: 1.25rem; }
+      nav.toc { position: static !important; }
+    }
+
+    nav.toc {
+      position: sticky;
+      top: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      font-size: 0.875rem;
+    }
+
+    nav.toc h2 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    nav.toc a {
+      display: block;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.35rem 0;
+      border-left: 2px solid transparent;
+      padding-left: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    nav.toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+
+    main section {
+      margin-bottom: 3rem;
+      scroll-margin-top: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      color: #fff;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--accent);
+    }
+
+    p { margin-bottom: 1rem; color: var(--text); }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+      box-shadow: var(--shadow);
+    }
+
+    .card.highlight { border-left: 4px solid var(--accent); }
+
+    .card.warn { border-left: 4px solid var(--orange); background: var(--orange-soft); }
+
+    .card.ok { border-left: 4px solid var(--green); background: var(--green-soft); }
+
+    .card.err { border-left: 4px solid var(--red); background: var(--red-soft); }
+
+    .qa {
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      border: 1px solid var(--border);
+    }
+
+    .qa .q {
+      font-weight: 600;
+      color: var(--purple);
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .qa .q::before { content: "Q · "; opacity: 0.7; }
+
+    .qa .a { color: var(--text); font-size: 0.95rem; }
+
+    .qa .a::before {
+      content: "A · ";
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--surface-2);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    td { background: var(--surface); }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+      font-size: 0.88em;
+    }
+
+    p code, li code, td code {
+      background: var(--surface-2);
+      padding: 0.15em 0.45em;
+      border-radius: 4px;
+      color: var(--orange);
+    }
+
+    .kw { color: #c792ea; }
+    .fn { color: #82aaff; }
+    .str { color: #c3e88d; }
+    .cm { color: #546e7a; font-style: italic; }
+    .dec { color: #f78c6c; }
+
+    ul, ol { margin: 0.75rem 0 1rem 1.5rem; }
+    li { margin-bottom: 0.4rem; }
+
+    .timeline {
+      position: relative;
+      padding-left: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent), var(--green));
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1rem;
+      padding-left: 0.5rem;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -1.65rem;
+      top: 0.55rem;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .timeline-item strong { color: var(--accent); }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    @media (max-width: 600px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+
+    .compare-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+
+    .compare-box h4 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      margin-right: 0.35rem;
+    }
+
+    .badge-yes { background: var(--green-soft); color: var(--green); }
+    .badge-no { background: var(--red-soft); color: var(--red); }
+    .badge-info { background: var(--accent-soft); color: var(--accent); }
+
+    .chain {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+    }
+
+    .chain span {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+    }
+
+    .chain .arrow { color: var(--text-muted); background: none; border: none; padding: 0; }
+
+    footer {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="tag">phase1_api_basics · practice</span>
+    <h1>Python 异步编程学习笔记</h1>
+    <p>基于练习 <code>05_async_batch.py</code> 的问答整理，覆盖 async/await、协程、gather、create_task、as_completed，以及 PyQt 桌面应用中的实践。</p>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc">
+    <h2>目录</h2>
+    <a href="#s1">1. 异步 vs 线程</a>
+    <a href="#s2">2. 何时加 async/await</a>
+    <a href="#s3">3. 协程是什么</a>
+    <a href="#s4">4. 调用 vs 执行</a>
+    <a href="#s5">5. tasks 与 gather</a>
+    <a href="#s6">6. create_task</a>
+    <a href="#s7">7. create 后谁先执行</a>
+    <a href="#s8">8. PyQt + 异步</a>
+    <a href="#s9">9. 100 个并发逐个显示</a>
+    <a href="#s10">10. as_completed 详解</a>
+    <a href="#s11">11. for 还是 async for</a>
+    <a href="#s12">12. 速查清单</a>
+  </nav>
+
+  <main>
+
+    <!-- 1 -->
+    <section id="s1">
+      <h2>1. 异步 vs 线程</h2>
+
+      <div class="qa">
+        <div class="q">Python 的异步和线程有什么区别？我的练习里该用哪个？</div>
+        <div class="a"><code>05_async_batch.py</code> 是典型的 I/O 密集型（等 API 网络响应），用异步最合适。线程也能并发等网络，但开销更大，不适合成百上千个请求。</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>对比项</th><th>异步 async/await</th><th>线程 threading</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>本质</td><td>单线程，协作式切换</td><td>多线程，OS 调度</td></tr>
+          <tr><td>适合场景</td><td>I/O 等待（HTTP、DB、文件）</td><td>包装阻塞代码、无法改 async 的库</td></tr>
+          <tr><td>切换时机</td><td>遇到 <code>await</code> 主动让出</td><td>操作系统决定，不可控</td></tr>
+          <tr><td>开销</td><td>很轻，可开成千上万个 task</td><td>较重，线程太多会拖慢系统</td></tr>
+          <tr><td>CPU 密集计算</td><td>不能真正并行（仍在单线程）</td><td>CPython 有 GIL，CPU 密集也几乎不能并行</td></tr>
+        </tbody>
+      </table>
+
+      <h3>练习中的时间线</h3>
+      <div class="compare-grid">
+        <div class="compare-box">
+          <h4>顺序执行（无 gather）</h4>
+          <pre>问 prompt ──3s──► 问 RAG ──3s──► 问 Agent ──3s──►
+<span class="dec">总计 ~9 秒</span></pre>
+        </div>
+        <div class="compare-box">
+          <h4>异步并发（你的写法）</h4>
+          <pre>问 prompt ──┐
+问 RAG   ──┼── 同时等 ──►
+问 Agent ──┘
+<span class="dec">总计 ~3 秒（取最慢的那个）</span></pre>
+        </div>
+      </div>
+
+      <div class="card ok">
+        <strong>关键理解：</strong>异步解决的是「同时在等多条网络响应」，不是「在多核上并行算 CPU」。CPU 密集任务应使用 <code>multiprocessing</code> 或多进程。
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="s2">
+      <h2>2. 何时加 async / await</h2>
+
+      <div class="qa">
+        <div class="q">写异步代码时经常忘记加 async、await，怎么判断哪里该加？</div>
+        <div class="a">记一条总规则：会等 I/O 且库提供异步版本的调用前面加 <code>await</code>；函数体内用了 <code>await</code> 的，定义时加 <code>async def</code>。</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>关键字</th><th>什么时候加</th><th>典型例子</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>async def</code></td>
+            <td>函数内部会写 <code>await</code></td>
+            <td><code>async def ask_question(...)</code></td>
+          </tr>
+          <tr>
+            <td><code>await</code></td>
+            <td>在等 async 函数、AsyncClient 方法、gather/sleep 等</td>
+            <td><code>await client.chat.completions.create(...)</code></td>
+          </tr>
+          <tr>
+            <td><code>asyncio.run</code></td>
+            <td>脚本入口，启动整个 async 程序</td>
+            <td><code>asyncio.run(batch_ask_questions())</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>调用链必须接好</h3>
+      <div class="chain">
+        <span>asyncio.run(...)</span>
+        <span class="arrow">→</span>
+        <span>async def batch_ask_questions</span>
+        <span class="arrow">→</span>
+        <span>await gather(...)</span>
+        <span class="arrow">→</span>
+        <span>await ask_question × N</span>
+        <span class="arrow">→</span>
+        <span>await client.create(...)</span>
+      </div>
+
+      <h3>常见报错对照</h3>
+      <table>
+        <thead>
+          <tr><th>漏了什么</th><th>报错 / 现象</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>该 <code>async def</code> 没加</td><td><code>SyntaxError: 'await' outside async function</code></td></tr>
+          <tr><td>该 <code>await</code> 没加</td><td><code>coroutine was never awaited</code> 或得到 <code>&lt;coroutine object ...&gt;</code></td></tr>
+          <tr><td>在 <code>__main__</code> 里直接 <code>await</code></td><td><code>SyntaxError: 'await' outside async function</code></td></tr>
+          <tr><td>没 await 就取 <code>.choices</code></td><td><code>AttributeError</code>（response 其实是 coroutine）</td></tr>
+        </tbody>
+      </table>
+
+      <div class="card highlight">
+        <strong>练习代码对照：</strong>
+        <ul>
+          <li><code>def get_questions()</code> — 普通函数，无 async/await</li>
+          <li><code>async def ask_question</code> — 内部有 <code>await create(...)</code></li>
+          <li><code>await asyncio.gather(*tasks)</code> — gather 前面也要 await</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="s3">
+      <h2>3. 协程是什么</h2>
+
+      <div class="qa">
+        <div class="q">协程就是指 async 定义的函数吗？</div>
+        <div class="a">方向对，但要更精确：<code>async def</code> 定义的是「协程函数」；调用它得到的是「协程对象」。日常说的「协程」多指后者。</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>概念</th><th>含义</th><th>例子</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>协程函数</td><td>用 <code>async def</code> 定义</td><td><code>async def ask_question(...):</code></td></tr>
+          <tr><td>协程对象</td><td>调用协程函数后的返回值</td><td><code>ask_question(client, q)</code> 的返回值</td></tr>
+          <tr><td>Task</td><td>被事件循环调度的协程对象</td><td><code>asyncio.create_task(...)</code></td></tr>
+        </tbody>
+      </table>
+
+<pre><span class="kw">async def</span> <span class="fn">ask_question</span>(...):   <span class="cm"># 协程函数</span>
+    ...
+
+coro = <span class="fn">ask_question</span>(client, q)  <span class="cm"># 协程对象，还没执行</span>
+<span class="fn">print</span>(coro)  <span class="cm"># &lt;coroutine object ask_question at 0x...&gt;</span>
+
+result = <span class="kw">await</span> coro             <span class="cm"># await 才驱动执行到结束</span></pre>
+    </section>
+
+    <!-- 4 -->
+    <section id="s4">
+      <h2>4. 调用 vs 执行</h2>
+
+      <div class="qa">
+        <div class="q">async def 定义的函数，如果只普通调用如 run()，只是创建对象，没有执行；await 或 gather 后才真正执行？</div>
+        <div class="a">完全正确。注意：这里说的 run() 是自己定义的 async 函数，不是 asyncio.run()。asyncio.run(coro) 会创建对象并立即执行到结束。</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>写法</th><th>是否执行函数体</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>ask_question(...)</code></td><td><span class="badge badge-no">否</span> 只创建协程对象</td></tr>
+          <tr><td><code>await ask_question(...)</code></td><td><span class="badge badge-yes">是</span></td></tr>
+          <tr><td><code>await asyncio.gather(...)</code></td><td><span class="badge badge-yes">是</span></td></tr>
+          <tr><td><code>asyncio.run(batch_ask_questions())</code></td><td><span class="badge badge-yes">是</span> 程序入口专用</td></tr>
+        </tbody>
+      </table>
+
+      <div class="card highlight">
+        <strong>执行时机：</strong>协程被调度后从第一行开始跑；遇到第一个 <code>await</code> 时若还在等 I/O 就暂停，让出给其他协程；I/O 完成后从这里继续。
+      </div>
+
+      <p>因此练习里三个「开始等待AI回答」几乎同时打印，是因为 <code>gather</code> 调度后，三个协程都跑到了 <code>await client.chat.completions.create(...)</code> 才开始等网络。</p>
+    </section>
+
+    <!-- 5 -->
+    <section id="s5">
+      <h2>5. tasks 列表与 gather</h2>
+
+      <div class="qa">
+        <div class="q">tasks = [...] 时函数都没执行，直到下一行 await 才开始？gather 负责调度，await 触发 gather，然后等所有结果？</div>
+        <div class="a">全部正确。事件循环是真正的调度者；gather 是工具，把多个协程绑在一起并发跑，等全部完成后按顺序返回 list。</div>
+      </div>
+
+<pre>tasks = [<span class="fn">ask_question</span>(async_client, q) <span class="kw">for</span> q <span class="kw">in</span> questions]  <span class="cm"># 只创建对象</span>
+result = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tasks)                  <span class="cm"># 这里才真正开跑</span></pre>
+
+      <div class="timeline">
+        <div class="timeline-item"><strong>第 1 步</strong> — 列表推导式创建 coro1、coro2、coro3，函数体一行都不跑</div>
+        <div class="timeline-item"><strong>第 2 步</strong> — <code>await gather</code> 把三个协程交给事件循环并发调度</div>
+        <div class="timeline-item"><strong>第 3 步</strong> — 各自跑到 <code>await create(...)</code> 时开始等网络</div>
+        <div class="timeline-item"><strong>第 4 步</strong> — 全部完成后，gather 按 tasks 顺序返回 <code>[(q1,a1), (q2,a2), (q3,a3)]</code></div>
+      </div>
+
+      <div class="card ok">
+        <strong>记忆：</strong><code>gather</code> = 一起开工 + 一起等齐 + 按顺序打包结果。
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="s6">
+      <h2>6. create_task 的用法</h2>
+
+      <div class="qa">
+        <div class="q">create_task 是不是为了在 gather 之前就开始执行？</div>
+        <div class="a">对。create_task 把协程包成 Task 并立刻挂到事件循环；在已有 loop 里，gather 之前就可能已经开工。</div>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-box">
+          <h4>写法 A — 你的代码</h4>
+<pre>tasks = [<span class="fn">ask_question</span>(...) <span class="kw">for</span> ...]
+<span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tasks)
+<span class="cm"># gather 之前：完全不执行
+# gather 时：启动 + 等待 + 收结果</span></pre>
+        </div>
+        <div class="compare-box">
+          <h4>写法 B — create_task</h4>
+<pre>tasks = [asyncio.<span class="fn">create_task</span>(<span class="fn">ask_question</span>(...)) <span class="kw">for</span> ...]
+<span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tasks)
+<span class="cm"># create_task 后：可能已在等 I/O
+# gather 时：主要是等待 + 收结果</span></pre>
+        </div>
+      </div>
+
+      <div class="card warn">
+        <strong>重要修正 — create_task 不是给 CPU 密集计算用的：</strong>
+        <p>asyncio 跑在单线程事件循环里。I/O 等待时 <code>await</code> 会让出；CPU 密集计算会占满线程，堵住整个 loop，其他协程也动不了。CPU 重活应使用 <code>multiprocessing</code> 或 <code>run_in_executor</code>。</p>
+        <p><code>create_task</code> 的真正价值：提前启动 I/O；中间插入轻量同步准备；并行多路 async 工作。</p>
+      </div>
+
+<pre><span class="cm"># create_task 典型用法：先飞请求，中间干别的事，再收结果</span>
+task = asyncio.<span class="fn">create_task</span>(<span class="fn">ask_question</span>(client, q1))
+other_data = <span class="fn">get_questions</span>()   <span class="cm"># 轻量同步准备</span>
+answer = <span class="kw">await</span> task              <span class="cm"># 汇合</span></pre>
+
+      <p><code>create_task</code> 必须在已有事件循环的 <code>async def</code> 内使用；脚本顶层直接调用会 <code>RuntimeError</code>。</p>
+    </section>
+
+    <!-- 7 -->
+    <section id="s7">
+      <h2>7. create_task 之后谁先执行</h2>
+
+      <div class="qa">
+        <div class="q">create_task 之后就会接受异步调度，后面的 other_data 会立马执行吗？</div>
+        <div class="a">other_data 会立刻执行（同步代码）。但 ask_question 函数体通常要等到当前协程遇到 await 让出后，事件循环才会调度那个 Task。</div>
+      </div>
+
+<pre>task = asyncio.<span class="fn">create_task</span>(<span class="fn">ask_question</span>(client, q1))  <span class="cm"># ① 登记 Task，马上返回</span>
+other_data = <span class="fn">get_questions</span>()                        <span class="cm"># ② 同步，立刻执行</span>
+<span class="fn">print</span>(other_data)                                   <span class="cm"># ③ 继续同步执行</span>
+answer = <span class="kw">await</span> task                                   <span class="cm"># ④ 让出，等 Task 完成</span></pre>
+
+      <table>
+        <thead>
+          <tr><th>时机</th><th>发生什么</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>create_task</code> 返回后</td><td>Task 进入待运行队列；当前函数继续往下走</td></tr>
+          <tr><td>中间同步代码</td><td>先跑完；ask_question 通常还没开始</td></tr>
+          <tr><td><code>await task</code></td><td>让出控制权；事件循环跑 Task 或等其 I/O 结果</td></tr>
+        </tbody>
+      </table>
+
+      <div class="card highlight">
+        <strong>记忆：</strong><code>create_task</code> = 先排队；同步代码 = 先跑自己的；<code>await</code> = 让出并等待。
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section id="s8">
+      <h2>8. PyQt GUI + 异步</h2>
+
+      <div class="qa">
+        <div class="q">开发 PyQt 桌面应用，Qt 本身有事件循环，想简单用异步是不是开线程在线程里跑 asyncio？</div>
+        <div class="a">对，这是常见且正确的做法：主线程给 Qt，asyncio 放工作线程，结果用 pyqtSignal 回主线程更新 UI。</div>
+      </div>
+
+      <div class="card err">
+        <strong>为什么不能主线程直接 asyncio.run？</strong>
+        <p>PyQt 主线程已被 <code>app.exec()</code> 占用。同一线程两个事件循环难以共存；主线程 <code>await</code> 会卡死界面。</p>
+      </div>
+
+<pre><span class="kw">class</span> <span class="fn">AsyncWorker</span>(QThread):
+    finished = pyqtSignal(<span class="fn">str</span>)
+
+    <span class="kw">def</span> <span class="fn">run</span>(self):
+        result = asyncio.<span class="fn">run</span>(self._ask())  <span class="cm"># 工作线程里跑 asyncio</span>
+        self.finished.emit(result)         <span class="cm"># signal 回主线程</span>
+
+    <span class="kw">async def</span> <span class="fn">_ask</span>(self):
+        <span class="cm"># AsyncClient + gather 写在这里</span>
+        ...</pre>
+
+      <table>
+        <thead>
+          <tr><th>规则</th><th>原因</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>asyncio.run</code> 放在 <code>QThread.run()</code></td><td>该线程有自己的 asyncio 事件循环</td></tr>
+          <tr><td>用 <code>pyqtSignal</code> 回主线程</td><td>Qt 控件只能在主线程修改</td></tr>
+          <tr><td>不在 worker 里直接 <code>label.setText</code></td><td>会不稳定或报错</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 9 -->
+    <section id="s9">
+      <h2>9. 100 个并发 — 谁先完成谁先显示</h2>
+
+      <div class="qa">
+        <div class="q">100 个 AI 请求，希望哪个结束就立马显示，是不是该用线程发信号，而不是异步？</div>
+        <div class="a">异步仍然很合适。不合适的是「只用 gather 等全部完成再统一显示」，不是 asyncio 本身。不必开 100 个线程。</div>
+      </div>
+
+      <h3>方案对比</h3>
+      <table>
+        <thead>
+          <tr><th>方案</th><th>评价</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>100 个 QThread</td><td><span class="badge badge-no">不推荐</span> 开销大、难管理</td></tr>
+          <tr><td>1 个 QThread + asyncio 并发 100 路 I/O</td><td><span class="badge badge-yes">推荐</span></td></tr>
+          <tr><td>线程池 + 同步 API（如 max_workers=20）</td><td><span class="badge badge-info">可以</span> 简单但并发受池大小限制</td></tr>
+          <tr><td>主线程同步调 API</td><td><span class="badge badge-no">不行</span> 界面卡死</td></tr>
+        </tbody>
+      </table>
+
+      <h3>两种「逐个显示」写法</h3>
+
+      <p><strong>写法 1：</strong>每个任务完成时内部 emit（gather 仍可留作「全部结束」收尾）</p>
+<pre><span class="kw">async def</span> <span class="fn">ask_one</span>(self, question):
+    answer = <span class="kw">await</span> self.client.chat.completions.create(...)
+    self.result_ready.emit(question, answer)  <span class="cm"># 完成就立刻发</span>
+    <span class="kw">return</span> question, answer
+
+tasks = [asyncio.<span class="fn">create_task</span>(self.<span class="fn">ask_one</span>(q)) <span class="kw">for</span> q <span class="kw">in</span> questions]
+<span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tasks)  <span class="cm"># 只等最后一个；中间 signal 早已发出</span>
+self.all_finished.emit()</pre>
+
+      <p><strong>写法 2（更直观）：</strong><code>as_completed</code> 按完成顺序处理</p>
+<pre><span class="kw">for</span> done <span class="kw">in</span> asyncio.<span class="fn">as_completed</span>(tasks):
+    question, answer = <span class="kw">await</span> done
+    self.result_ready.emit(question, answer)
+self.all_finished.emit()</pre>
+    </section>
+
+    <!-- 10 -->
+    <section id="s10">
+      <h2>10. as_completed 详解</h2>
+
+      <div class="qa">
+        <div class="q">as_completed 返回的是什么？循环和循环体里的 await 分别等什么？</div>
+        <div class="a">返回普通同步迭代器，每次 yield 一个 awaitable（「下一个刚完成的那一项」）。for 每次取一个；循环体内 await 取出该任务的真实返回值。</div>
+      </div>
+
+      <h3>两层含义</h3>
+      <table>
+        <thead>
+          <tr><th>步骤</th><th>代码</th><th>等什么</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>① for 迭代</td>
+            <td><code>for done in as_completed(tasks)</code></td>
+            <td>等「下一个完成的任务」出现</td>
+          </tr>
+          <tr>
+            <td>② 循环体内</td>
+            <td><code>result = await done</code></td>
+            <td>取出已完成任务的返回值（通常瞬间完成）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>时间线示例（耗时 3s / 1s / 2s）</h3>
+      <div class="timeline">
+        <div class="timeline-item"><strong>t=0s</strong> — 三个请求并发发出</div>
+        <div class="timeline-item"><strong>t=1s</strong> — q2 最先完成 → 第一次循环 → 打印 q2</div>
+        <div class="timeline-item"><strong>t=2s</strong> — q3 完成 → 第二次循环 → 打印 q3</div>
+        <div class="timeline-item"><strong>t=3s</strong> — q1 完成 → 第三次循环 → 打印 q1</div>
+      </div>
+      <p>打印顺序：<strong>q2 → q3 → q1</strong>（按完成时间，不是提问顺序）。</p>
+
+      <h3>与 gather 对比</h3>
+      <table>
+        <thead>
+          <tr><th></th><th>gather</th><th>as_completed</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>返回时机</td><td>全部完成后才返回 list</td><td>每完成一个 yield 一个</td></tr>
+          <tr><td>顺序</td><td>与传入顺序一致</td><td>按完成先后</td></tr>
+          <tr><td>适合</td><td>批量收齐再处理</td><td>完成一个处理一个（如实时刷 UI）</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 11 -->
+    <section id="s11">
+      <h2>11. 普通 for 还是 async for？</h2>
+
+      <div class="qa">
+        <div class="q">你之前写了 async for，又说普通 for，到底哪个正确？</div>
+        <div class="a">标准写法是普通 for + 循环体内 await。as_completed 返回的是同步迭代器，不支持 async for。</div>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-box">
+          <h4><span class="badge badge-yes">正确</span></h4>
+<pre><span class="kw">for</span> done <span class="kw">in</span> asyncio.<span class="fn">as_completed</span>(tasks):
+    result = <span class="kw">await</span> done</pre>
+        </div>
+        <div class="compare-box">
+          <h4><span class="badge badge-no">错误</span></h4>
+<pre><span class="kw">async for</span> done <span class="kw">in</span> asyncio.<span class="fn">as_completed</span>(tasks):
+    result = <span class="kw">await</span> done
+<span class="cm"># TypeError：没有 __aiter__</span></pre>
+        </div>
+      </div>
+
+      <div class="card ok">
+        整个 <code>for ... await</code> 块必须写在 <code>async def</code> 函数里，因为循环体含有 <code>await</code>。
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section id="s12">
+      <h2>12. 速查清单</h2>
+
+      <div class="card highlight">
+        <h3 style="margin-top:0;color:#fff;">写代码时扫一眼</h3>
+        <ol>
+          <li>函数里有 <code>await</code>？→ 声明必须是 <code>async def</code></li>
+          <li>等网络 / AsyncClient / gather / sleep？→ 前面加 <code>await</code></li>
+          <li>调用自己的 <code>async def</code>？→ 调用处要 <code>await</code>（或放进 gather）</li>
+          <li>脚本入口？→ <code>asyncio.run(main())</code>，不要顶层 <code>await</code></li>
+          <li>看到 <code>&lt;coroutine object ...&gt;</code>？→ 少写了 <code>await</code></li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;color:#fff;">场景选型</h3>
+        <table>
+          <thead>
+            <tr><th>场景</th><th>推荐</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>多个 HTTP / API 并发等</td><td>async + gather 或 as_completed</td></tr>
+            <tr><td>完成一个显示一个（PyQt）</td><td>QThread + asyncio + as_completed + signal</td></tr>
+            <tr><td>gather 前想先干别的事</td><td>create_task</td></tr>
+            <tr><td>现成同步库、无法改 async</td><td>线程池</td></tr>
+            <tr><td>CPU 密集计算</td><td>multiprocessing / run_in_executor</td></tr>
+            <tr><td>PyQt 主线程</td><td>只跑 Qt；asyncio 放工作线程</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card ok">
+        <h3 style="margin-top:0;color:#fff;">一句话总纲</h3>
+        <ul>
+          <li><strong>造对象 vs 跑对象：</strong>普通调用只造协程对象；<code>await</code> / <code>gather</code> / <code>asyncio.run</code> 才是跑对象</li>
+          <li><strong>asyncio 擅长：</strong>同时等多件 I/O 的事</li>
+          <li><strong>CPU 算力：</strong>交给进程或线程池，别堵事件循环</li>
+          <li><strong>as_completed：</strong>外圈 for 等「谁刚完成」，内圈 await 拿结果；用普通 for</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  生成自练习 05 异步问答 · phase1_api_basics/practice/async_learning_notes.html · 2026-06-22
+</footer>
+
+</body>
+</html>
