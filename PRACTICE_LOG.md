@@ -8,7 +8,7 @@
 - [x] `02_streaming.py` — 流式 + AI 专家 + chunk 统计
 - [x] `03_error_retry.py` — call_llm 封装 + 指数退避 + AI 专家
 - [x] `04_token_usage.py` — usage 统计 + 多轮累计 token + 成本估算
-- [ ] `05_async_batch.py`
+- [x] `05_async_batch.py` — AsyncClient 并发 + 批量 3 个 AI 概念
 - [ ] `06_function_calling.py`
 - [ ] `07_tool_loop.py`
 - [ ] `08_stream_tool.py`

@@ -26,7 +26,7 @@
 
 ## 05 异步
 
-- [ ] 能使用 AsyncOpenAI + asyncio.gather
+- [x] 能使用 AsyncOpenAI + asyncio.gather
 
 ## 06～08 Function Calling
 
