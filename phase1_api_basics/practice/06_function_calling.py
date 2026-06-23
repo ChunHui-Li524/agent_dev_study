@@ -2,8 +2,8 @@
 练习 06: Function Calling 基础
 对应 example: example/06_function_calling_basic.py
 学习目标: 单轮 tool 闭环
-完成日期:
-自检: [ ] 闭卷重写  [ ] 变式完成  [ ] 运行通过
+完成日期:2026/06/14
+自检: [√] 闭卷重写  [√] 变式完成  [√] 运行通过
 
 变式要求（AI 专家 Agent）: lookup_glossary 工具
 """
@@ -142,3 +142,27 @@ def process_tool_call(client, messages, response):
 
 if __name__ == "__main__":
     main()
+
+# ============================================================
+# 评卷意见（AI课程评卷老师 | 2026-06-14）
+# 结论: 通过 ✅  |  得分: 88/100
+# 运行验证: PyCharm 运行通过（lookup_glossary 调用 LLM/Agent，exit code 0）
+# ------------------------------------------------------------
+# 优点:
+#   - 单轮 tool 闭环正确：assistant(tool_calls) → tool 消息 → 二次 ask
+#   - lookup_glossary 变式完成，term in key 模糊匹配
+#   - ask / process_tool_call / main 分层清晰
+#   - 文件内已注释标准 parameters schema 与 tool call 标准写法
+# 待改进:
+#   1. parameters 建议改为标准 JSON Schema（见上方注释）
+#   2. ask() 建议移到 for tool_call 循环外（多 tool 并行时更稳）
+#   3. assistant 消息建议 content: None + tool_calls
+# 检查项:
+#   [√] 单轮 tool 闭环
+#   [√] lookup_glossary 变式
+#   [√] 处理 tool_calls 并回传 tool 消息
+#   [√] AI 专家 persona
+#   [√] 通义千问环境变量
+#   [√] 可独立运行
+#   [ ] parameters 标准 JSON Schema（当前为简写格式）
+# ============================================================

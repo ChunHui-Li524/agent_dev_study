@@ -30,9 +30,9 @@
 
 ## 06～08 Function Calling
 
-- [ ] 能定义 tools schema
-- [ ] 能处理 tool_calls 并回传 tool 消息
-- [ ] 能根据 finish_reason 循环
+- [x] 能定义 tools schema
+- [x] 能处理 tool_calls 并回传 tool 消息
+- [x] 能根据 finish_reason 循环
 - [ ] 能拼接流式 tool_calls
 
 ## 09 综合 v1
