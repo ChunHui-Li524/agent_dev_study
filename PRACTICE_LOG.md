@@ -11,7 +11,7 @@
 - [x] `05_async_batch.py` — AsyncClient 并发 + 批量 3 个 AI 概念
 - [x] `06_function_calling.py` — 单轮 tool 闭环 + lookup_glossary
 - [x] `07_tool_loop.py` — finish_reason 循环 + 查术语 + 推荐主题
-- [ ] `08_stream_tool.py`
+- [x] `08_stream_tool.py` — 流式 tool_calls 拼接 + StreamToolCallAgent
 - [ ] `09_ai_expert_v1.py`
 - [x] `02_function_calling.py` — 已有进阶内容，可对齐 06～08
 
