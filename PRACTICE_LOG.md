@@ -12,7 +12,7 @@
 - [x] `06_function_calling.py` — 单轮 tool 闭环 + lookup_glossary
 - [x] `07_tool_loop.py` — finish_reason 循环 + 查术语 + 推荐主题
 - [x] `08_stream_tool.py` — 流式 tool_calls 拼接 + StreamToolCallAgent
-- [ ] `09_ai_expert_v1.py`
+- [x] `09_ai_expert_v1.py` — CLI 综合 v1：流式 + tool + token（重试可加强）
 - [x] `02_function_calling.py` — 已有进阶内容，可对齐 06～08
 
 ## Phase 2 — LangChain
